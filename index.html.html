@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will you be my valentine?</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c94b7d 50%, #ff758c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '💕';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.1;
+            top: 10%;
+            left: 10%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        body::after {
+            content: '💖';
+            position: absolute;
+            font-size: 80px;
+            opacity: 0.1;
+            bottom: 15%;
+            right: 15%;
+            animation: float 5s ease-in-out infinite reverse;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 60px 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            position: relative;
+        }
+
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: transform 0.2s;
+        }
+
+        .music-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .pokemon-image {
+            width: 280px;
+            height: auto;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 40px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            min-height: 50px;
+        }
+
+        button {
+            padding: 14px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .yes-btn {
+            background: #4ade80;
+            color: white;
+        }
+
+        .yes-btn:hover {
+            background: #22c55e;
+        }
+
+        .no-btn {
+            background: #ef4444;
+            color: white;
+            position: fixed;
+            z-index: 1000;
+        }
+
+        .no-btn:hover {
+            background: #dc2626;
+        }
+
+        .success-message {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .hearts {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .celebration {
+            font-size: 22px;
+            color: #e91e63;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Music toggle button -->
+    <button id="musicToggle" onclick="toggleMusic()" class="music-toggle">
+        🔇
+    </button>
+
+    <div class="container">
+        <div id="question">
+            <img id="psyduckImage" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png" 
+                 alt="Psyduck" 
+                 class="pokemon-image"
+                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22280%22 height=%22280%22%3E%3Crect fill=%22%23ffd700%22 width=%22280%22 height=%22280%22 rx=%2220%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%22100%22%3E🦆%3C/text%3E%3C/svg%3E'">
+            <h1>Ahmm Jessel Naa lang unta kuy Pangutana diba klaro nmn guro na crush tika and i wanna ask if pwede bako nimo tagaan ug chance nga manguyab sa imo.......</h1>
+            <div class="buttons">
+                <button class="yes-btn" onclick="sayYes()">Yes</button>
+                <button class="no-btn" id="noBtn" onclick="moveButton()" onmouseover="moveButton()">No (never!)</button>
+            </div>
+        </div>
+
+        <div id="success" class="success-message">
+            <img src="happy-psyduck.png" alt="Happy Psyduck" class="pokemon-image" style="margin-bottom: 20px;">
+            <div class="hearts">💕💖💗💝💘</div>
+            <h1 class="celebration">If yes Igna lang ko sa chat maghulat rako hehe 🎉</h1>
+            <p style="margin-top: 20px; color: #666; font-size: 18px;">Happy Valentine's Day! 💕</p>
+            <button onclick="goBack()" style="margin-top: 30px; background: #8b5cf6; color: white; padding: 12px 24px; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; font-weight: 600;">← Ask Again</button>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const psyduckImg = document.getElementById('psyduckImage');
+        
+        // Psyduck expressions
+        const expressions = {
+            normal: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/54.png',
+            crying: 'crying-psyduck.png' // The sad crying Psyduck
+        };
+        
+        let currentExpression = 'normal';
+
+        // Background music - Sweet piano love song
+        const music = new Audio('https://www.bensound.com/bensound-music/bensound-tenderness.mp3');
+        music.loop = true;
+        music.volume = 0.3;
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            const btn = document.getElementById('musicToggle');
+            if (musicPlaying) {
+                music.pause();
+                btn.textContent = '🔇';
+                musicPlaying = false;
+            } else {
+                music.play().catch(e => {
+                    console.log('Music play failed:', e);
+                    btn.textContent = '🔇';
+                });
+                btn.textContent = '🔊';
+                musicPlaying = true;
+            }
+        }
+
+        function changePsyduckExpression(expression) {
+            psyduckImg.style.fontSize = '';
+            psyduckImg.src = expressions[expression];
+            psyduckImg.alt = expression === 'crying' ? 'Crying Psyduck' : 'Psyduck';
+        }
+
+        function moveButton() {
+            // Change Psyduck to crying expression
+            changePsyduckExpression('crying');
+            
+            // Reset to normal after 1.5 seconds
+            setTimeout(() => {
+                changePsyduckExpression('normal');
+            }, 1500);
+            
+            // Get the container's position
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            
+            // Calculate center of Psyduck image area (top portion of container)
+            const centerX = containerRect.left + containerRect.width / 2;
+            const centerY = containerRect.top + 180; // Around Psyduck height
+            
+            // Random angle and radius around Psyduck
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 150 + Math.random() * 100; // 150-250px from center
+            
+            // Calculate position around Psyduck
+            const newX = centerX + Math.cos(angle) * radius - noBtn.offsetWidth / 2;
+            const newY = centerY + Math.sin(angle) * radius - noBtn.offsetHeight / 2;
+            
+            // Keep button within viewport boundaries
+            const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+            
+            const finalX = Math.max(20, Math.min(newX, maxX));
+            const finalY = Math.max(20, Math.min(newY, maxY));
+            
+            // Apply new position
+            noBtn.style.left = finalX + 'px';
+            noBtn.style.top = finalY + 'px';
+        }
+
+        function sayYes() {
+            // Change Psyduck to happy/excited
+            changePsyduckExpression('normal');
+            
+            document.getElementById('question').style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+            
+            // Confetti explosion with hearts and stars!
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                
+                // Heart and star shaped confetti
+                confetti({
+                    particleCount,
+                    startVelocity: 30,
+                    spread: 360,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#ff6b9d', '#c94b7d', '#ff758c', '#ff1744', '#ff4081'],
+                    shapes: ['circle', 'square'],
+                    scalar: 1.2,
+                    ticks: 60
+                });
+                confetti({
+                    particleCount,
+                    startVelocity: 30,
+                    spread: 360,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#ff6b9d', '#c94b7d', '#ff758c', '#ff1744', '#ff4081'],
+                    shapes: ['circle', 'square'],
+                    scalar: 1.2,
+                    ticks: 60
+                });
+            }, 250);
+            
+            // Create heart and star confetti
+            for (let i = 0; i < 30; i++) {
+                createHeart();
+            }
+            for (let i = 0; i < 20; i++) {
+                createStar();
+            }
+        }
+
+        function goBack() {
+            document.getElementById('question').style.display = 'block';
+            document.getElementById('success').style.display = 'none';
+            moveButton(); // Reset the No button position
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.top = '-50px';
+            heart.style.fontSize = Math.random() * 30 + 20 + 'px';
+            heart.style.opacity = '0.8';
+            heart.style.transition = 'all 3s ease-in';
+            heart.style.pointerEvents = 'none';
+            heart.style.zIndex = '1000';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.style.top = '100vh';
+                heart.style.opacity = '0';
+            }, 100);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 3000);
+        }
+
+        function createStar() {
+            const star = document.createElement('div');
+            star.innerHTML = '⭐';
+            star.style.position = 'fixed';
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = '-50px';
+            star.style.fontSize = Math.random() * 30 + 20 + 'px';
+            star.style.opacity = '0.8';
+            heart.style.transition = 'all 3s ease-in';
+            star.style.pointerEvents = 'none';
+            star.style.zIndex = '1000';
+            star.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+            star.style.transition = 'all 3s ease-in';
+            
+            document.body.appendChild(star);
+            
+            setTimeout(() => {
+                star.style.top = '100vh';
+                star.style.opacity = '0';
+                star.style.transform = 'rotate(' + (Math.random() * 720 + 360) + 'deg)';
+            }, 100);
+            
+            setTimeout(() => {
+                star.remove();
+            }, 3000);
+        }
+
+        // Initialize button position
+        moveButton();
+    </script>
+</body>
+</html>
